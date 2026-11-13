@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>TPI Coran Complet</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" href="icon-192.png"><style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>TPI Coran Complet</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500&display=swap">
@@ -7,7 +7,7 @@
 /* Layout: mode switch, device screen as hero, live mic / scenario controls, then instrument panel. Single dark look by choice: mosque at night. */
 :root{
   --bg:#0d1416; --panel:#131d20; --line:#22322f; --fg:#e7ece6; --muted:#8a9a94;
-  --brass:#c9a85c; --ok:#4fd18b; --err:#ff5d5d; --glass:#050807;
+  --brass:#c9a85c; --ok:#4fd18b; --err:#ff5d5d; --glass:#000;
   --f-ar:"TPI Quran","Amiri Quran","Amiri","Traditional Arabic",serif;
   --f-disp:"Fraunces",Georgia,serif;
   --f-body:"IBM Plex Sans",system-ui,sans-serif;
@@ -33,14 +33,25 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .hint{color:var(--muted);font-size:13px;margin:0}
 .device{background:linear-gradient(#1b2321,#101614);border:1px solid #2a3532;border-radius:14px;padding:10px 10px 6px;box-shadow:0 18px 40px -20px #000}
 .screen{position:relative;aspect-ratio:4/1;max-width:100%;background:var(--glass);border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:4px 14px;transition:box-shadow .3s}
-.screen.green{box-shadow:inset 0 0 0 2px var(--ok),inset 0 0 40px -10px var(--ok)}
-.screen.red{box-shadow:inset 0 0 0 2px var(--err),inset 0 0 40px -10px var(--err)}
-.verse{direction:rtl;font-family:var(--f-ar);text-align:center;line-height:1.75;font-size:40px;width:100%;max-height:100%}
-.verse .pend{opacity:.38}.verse .done{opacity:1}
-.verse .cur{opacity:.7;text-decoration:underline;text-decoration-color:var(--brass);text-underline-offset:.35em}
-.verse .miss{color:var(--err);opacity:1;text-decoration:underline wavy var(--err);text-underline-offset:.3em}
-.screen.green .verse{color:var(--ok)}
-.screen.red .verse .done{color:var(--err)}
+/* Mat screen rules: white Uthmani text on black, nothing else. Frame off until the verse is identified,
+   green while the expected verse is being recited correctly, red on error until corrected.
+   The text stays white; only the faulty word turns red. */
+.screen{--fw:2px;touch-action:manipulation}
+.screen.green{box-shadow:inset 0 0 0 var(--fw) var(--ok),inset 0 0 40px -10px var(--ok)}
+.screen.red{box-shadow:inset 0 0 0 var(--fw) var(--err),inset 0 0 40px -10px var(--err)}
+.verse{direction:rtl;font-family:var(--f-ar);text-align:center;line-height:1.75;font-size:40px;width:100%;max-height:100%;color:#fff;transition:transform .45s ease}
+.verse .miss{color:var(--err)}
+/* Very long verse: prompter mode, the text slides so that the word being recited stays in view */
+.screen.scroll{align-items:flex-start}
+.screen.scroll .verse{max-height:none}
+@media (prefers-reduced-motion:reduce){.verse{transition:none}}
+/* Bare mat screen: only the verse, full window */
+body.mat{overflow:hidden;background:#000}
+body.mat .wrap{max-width:none;padding:0;gap:0;display:block}
+body.mat .wrap>*:not(.device){display:none!important}
+body.mat .device{position:fixed;inset:0;border:0;border-radius:0;padding:0;background:#000;box-shadow:none}
+body.mat .bezel{display:none}
+body.mat .screen{box-sizing:border-box;aspect-ratio:auto;width:100%;height:100%;border-radius:0;padding:2vh 3vw;--fw:max(4px,.9vh);cursor:none}
 .idle{font-family:var(--f-mono);color:var(--muted);font-size:13px;text-align:center;direction:ltr}
 .idle b{color:var(--fg);font-weight:500}
 .dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brass);margin:0 3px;animation:p 1.2s infinite}
@@ -89,8 +100,7 @@ pre{margin:0;font:12.5px/1.55 var(--f-mono);overflow-x:auto;color:var(--fg)}
 pre .k{color:var(--muted)}pre .g{color:var(--ok)}pre .r{color:var(--err)}pre .b{color:var(--brass)}
 footer{color:var(--muted);font-size:12.5px;max-width:78ch;display:grid;gap:6px}
 footer p{margin:0}
-.screen.pulse{box-shadow:inset 0 0 0 2px var(--ok),inset 0 0 40px -10px var(--ok);transition:none}
-.verse .ell{opacity:.35}
+.screen.pulse{box-shadow:inset 0 0 0 calc(var(--fw)*2) var(--ok),inset 0 0 60px -6px var(--ok);transition:none}
 #ref .ar{font-family:var(--f-ar);font-size:14px}
 select{max-width:100%}
 #surah-pick{max-width:min(260px,70vw)}
@@ -100,7 +110,7 @@ select{max-width:100%}
   <header>
     <div>
       <h1>TPI <span>·</span> Coran complet</h1>
-      <p class="sub">114 sourates, 6 236 versets. Récitez n'importe quel passage : l'écran du tapis l'identifie, valide verset par verset et bloque sur erreur.</p>
+      <p class="sub">114 sourates, 6 236 versets. Récitez n'importe quel passage : l'écran du tapis l'identifie, valide verset par verset et bloque sur erreur. « Écran tapis » affiche l'écran seul, tel qu'il sera sur le tapis.</p>
     </div>
     <div class="rug" aria-label="Tapis 110 × 70 cm, écran 40 × 10 cm en partie haute">
       <svg viewBox="0 0 70 110" aria-hidden="true"><rect x="1" y="1" width="68" height="108" rx="2" fill="#1d3a33" stroke="#c9a85c" stroke-width="1.2"/><rect x="6" y="20" width="58" height="84" rx="1" fill="none" stroke="#c9a85c" stroke-opacity=".45" stroke-width=".8"/><path d="M35 22 L52 38 L52 50 L18 50 L18 38 Z" fill="none" stroke="#c9a85c" stroke-opacity=".45" stroke-width=".8"/><rect x="15" y="5" width="40" height="10" rx="1" fill="#050807" stroke="#e7ece6" stroke-width=".8"/></svg>
@@ -116,6 +126,7 @@ select{max-width:100%}
   <div id="live-ctl" class="ctrl" style="display:grid;gap:10px">
     <div class="ctrl">
       <button class="btn primary" id="mic-btn">🎙 Démarrer l'écoute</button>
+      <button class="btn" id="mat-btn" title="Affiche uniquement l'écran du tapis, en plein écran. Double-clic ou Échap pour revenir.">▣ Écran tapis</button>
       <button class="btn" id="rand">Verset au hasard</button>
       <button class="btn" id="live-reset">Réinitialiser</button>
       <label class="prof" for="profile">Profil
@@ -171,7 +182,8 @@ select{max-width:100%}
   <footer>
     <p>Corpus : les 114 sourates et 6 236 versets. Chaque début de verset est un point d'entrée possible, plus la Basmala devant 112 sourates, soit 6 348 points d'entrée. L'écran reste vide tant que le jeu de candidats n'est pas réduit à un seul.</p>
     <p>Le texte uthmani est rapproché de l'orthographe standard (alif, hamza, ٰ, vocatif يا, lettres isolées) pour comparer ce que la reconnaissance vocale écrit à la référence.</p>
-    <p>En mode live, la transcription vient de la reconnaissance vocale du navigateur (Chrome l'envoie aux serveurs de Google). Elle n'est pas entraînée sur le Coran et sert seulement à la démonstration ; le produit utilisera un modèle embarqué hors ligne.</p>
+    <p>En mode live, la transcription vient de la reconnaissance vocale du navigateur (Chrome l'envoie aux serveurs de Google). Elle n'est pas entraînée sur le Coran et demande une connexion internet. Le projet avance pour le moment avec cette reconnaissance ; une autre solution sera étudiée ensuite.</p>
+    <p>Écran : texte blanc sur noir, cadre éteint tant que le verset n'est pas identifié, vert pendant la récitation correcte, rouge sur erreur avec le mot fautif en rouge. Un verset trop long est d'abord réduit, puis défile comme un prompteur.</p>
     <p>Texte uthmani : The Noble Qur'an Encyclopedia (quranenc.com), via quran-json, licence CC BY-SA 4.0.</p>
   </footer>
 </div>
@@ -246,13 +258,20 @@ function eq(a,b){if(a===b)return true;if(Math.min(a.length,b.length)<3)return fa
 
 /* Detector: narrows the entry-point set word by word, locks only on uniqueness */
 const newDet=()=>({heard:[],cands:null,skips:0});
+/* Candidates whose first word matches w, memoised per profile: same result as filtering CANDS, without redoing 6 348 comparisons. */
+let FIRST=new Map();
+function firstCands(w){
+  const key=prof+"|"+w;let r=FIRST.get(key);
+  if(!r){if(FIRST.size>4000)FIRST=new Map();r=CANDS.filter(c=>eq(cw(c,0).n,w));FIRST.set(key,r);}
+  return r;
+}
 function detStep(d,w){
   const k=d.heard.length,pool=d.cands||CANDS;
-  let keep=pool.filter(c=>{const x=cw(c,k);return x&&eq(x.n,w);});
+  let keep=pool===CANDS&&k===0?firstCands(w):pool.filter(c=>{const x=cw(c,k);return x&&eq(x.n,w);});
   if(!keep.length){
     if(PROFILES[prof].ignore&&k>=2&&d.skips<1){d.skips++;return{r:"skip"};}
     d.heard=[];d.skips=0;
-    keep=CANDS.filter(c=>eq(cw(c,0).n,w));
+    keep=firstCands(w);
     if(!keep.length){d.cands=null;return{r:"none"};}
   }
   d.heard.push(w);d.cands=keep;d.skips=0;
@@ -260,12 +279,12 @@ function detStep(d,w){
 }
 
 /* Engine state */
-const fresh=()=>({flash:null,state:"idle",det:newDet(),sh:null,locked:null,s:0,a:0,p:0,color:"white",status:"waiting",miss:-1,pending:false,
+const fresh=()=>({flash:null,state:"idle",det:newDet(),sh:null,locked:null,s:0,a:0,p:0,ign:0,eskip:0,color:"white",status:"waiting",miss:-1,pending:false,
   msg:"Micro prêt — en attente du takbīr ou des premiers mots.",msgCls:""});
 
 function lock(S,c,d,jump){
   const pos=cw(c,d.heard.length-1);
-  S.locked=c.id;S.state="active";S.s=c.s;S.color="white";S.status="ok";S.miss=-1;S.pending=false;S.sh=null;
+  S.locked=c.id;S.state="active";S.s=c.s;S.color="white";S.status="ok";S.miss=-1;S.pending=false;S.sh=null;S.ign=0;S.eskip=0;
   const name=`${surahName(c.s)} (${c.s})`;
   if(pos.a===0){S.a=1;S.p=0;S.msg=`Verrouillé : ${name} · Basmala`;S.msgCls="ok";return;}
   S.a=pos.a;S.p=pos.t+1;
@@ -279,7 +298,7 @@ function lock(S,c,d,jump){
 const FLASH_MS=300;   // frame-only green pulse; next verse text is shown at once
 function validate(S,corr){
   const done=S.a,n=nextRef(S.s,S.a);
-  S.miss=-1;S.state="active";S.sh=null;S.msgCls="ok";
+  S.miss=-1;S.state="active";S.sh=null;S.msgCls="ok";S.ign=0;S.eskip=0;
   const head=corr?`✓ Erreur corrigée — ${S.s}:${done} validé`:`✓ ${S.s}:${done} validé`;
   if(n){
     S.flash={a:done,until:Date.now()+FLASH_MS};
@@ -308,6 +327,28 @@ function endRecitation(S,why){
   S.state="end";S.status="waiting";S.color="white";S.sh=null;S.flash=null;
   S.msg=`${why} — passage au rukūʿ.`+(n&&S.s?` Point de reprise mémorisé : ${S.s}:${n}`:" Sourate terminée.");S.msgCls="";
 }
+/* A jump out of a blocked verse is accepted only when the reciter has really moved elsewhere.
+   Never forward inside the same surah: a skipped verse must stay blocked in red (contract, case 3).
+   Never when the words heard are simply the rest of the current passage: the tail of a verse can
+   coincide with the opening words of another verse elsewhere, and following it would display a verse
+   that is not being recited. */
+const JUMP_VERSES=4;      // the current verse and the three that follow, whatever their length
+const MAX_IGNORE=2;
+function jumpOk(S,c,heard){
+  if(c.s===S.s&&c.a>=S.a)return false;
+  const f=F[S.s],from=START[S.s][S.a],to=S.a+JUMP_VERSES<V[S.s].length?START[S.s][S.a+JUMP_VERSES]:f.length;
+  for(let i=from;i<to;i++){
+    // the detector may have dropped one unrecognised word between two heard words: allow a one-word gap
+    let pos=i,k=0;
+    for(;k<heard.length;k++){
+      if(pos<to&&eq(f[pos].n,heard[k]))pos++;
+      else if(k>0&&pos+1<to&&eq(f[pos+1].n,heard[k]))pos+=2;
+      else break;
+    }
+    if(k===heard.length)return false;
+  }
+  return true;
+}
 function feed(S,tok){
   if(tok.k==="takbir"||tok.k==="sami"){
     if(["active","error"].includes(S.state))return endRecitation(S,tok.k==="takbir"?"Takbīr":"Samiʿa Allāhu liman ḥamidah");
@@ -324,27 +365,34 @@ function feed(S,tok){
   if(S.state==="active"&&!advance(S)){if(w==="مين")return;S.state="detection";S.det=newDet();return detect(S,w);}
   const exp=V[S.s][S.a].tok;
   if(S.state==="error"){
-    if(S.p>0&&eq(w,exp[S.p]))S.p++;
-    else if(eq(w,exp[0])){S.p=1;S.msg="Reprise du verset…";S.msgCls="";}
+    // the shadow detector hears every word, so that it sees the real sequence and not a filtered one
+    S.sh=S.sh||newDet();const r=detStep(S.sh,w);
+    if(S.p>0&&eq(w,exp[S.p])){S.p++;S.eskip=0;}
+    else if(eq(w,exp[0])){S.p=1;S.eskip=0;S.msg="Reprise du verset…";S.msgCls="";}
     else{
-      if(!PROFILES[prof].ignore)S.p=0;
+      // Tolerant profile: one unrecognised word may be ignored, a second one cancels the attempt.
+      // Without this limit, scattered words of another passage could add up to a validation.
+      if(PROFILES[prof].ignore&&S.p>0&&!S.eskip)S.eskip=1;else{S.p=0;S.eskip=0;}
       // shadow detection: has the reciter moved elsewhere?
-      S.sh=S.sh||newDet();const r=detStep(S.sh,w);
-      if(r.r==="lock"&&S.sh.heard.length>=3&&!(r.c.s===S.s&&r.c.a===S.a))return lock(S,r.c,S.sh,true);
+      if(r.r==="lock"&&S.sh.heard.length>=3&&jumpOk(S,r.c,S.sh.heard))return lock(S,r.c,S.sh,true);
       return;
     }
     if(S.p===exp.length)validate(S,true);
     return;
   }
-  if(eq(w,exp[S.p])){S.p++;S.color="white";S.status="ok";if(S.p===exp.length)validate(S,false);return;}
+  if(eq(w,exp[S.p])){S.p++;S.ign=0;S.color="white";S.status="ok";if(S.p===exp.length)validate(S,false);return;}
   if(w==="مين")return;
   if(exp[S.p+1]&&eq(w,exp[S.p+1])){
-    S.miss=S.p;S.state="error";S.color="red";S.status="error";S.p=0;S.sh=null;
+    S.miss=S.p;S.state="error";S.color="red";S.status="error";S.p=0;S.eskip=0;S.sh=null;
     S.msg=`⚠ OMISSION : « ${V[S.s][S.a].disp[V[S.s][S.a].td[S.miss]]} » manquant — blocage, récitez à nouveau ${S.s}:${S.a}`;S.msgCls="err";return;
   }
-  if(PROFILES[prof].ignore&&!exp.some(e=>eq(w,e))&&S.p>0){S.msg=`Mot non reconnu ignoré (profil tolérant)`;S.msgCls="";
+  // Tolerant profile: the worshipper may start the verse again from its first word, without an error.
+  if(PROFILES[prof].ignore&&S.p>0&&eq(w,exp[0])){S.p=1;S.ign=0;S.msg="Reprise du verset…";S.msgCls="";return;}
+  // Tolerant profile: up to MAX_IGNORE unrecognised words in a row are ignored (recognition noise); one more is an error.
+  if(PROFILES[prof].ignore&&!exp.some(e=>eq(w,e))&&S.p>0&&S.ign<MAX_IGNORE){S.ign++;S.msg=`Mot non reconnu ignoré (profil tolérant)`;S.msgCls="";
     S.sh=S.sh||newDet();detStep(S.sh,w);return;}
-  S.miss=S.p;S.state="error";S.color="red";S.status="error";S.p=0;
+  S.miss=S.p;S.state="error";S.color="red";S.status="error";S.ign=0;S.eskip=0;
+  S.p=eq(w,exp[0])?1:0;   // the word that broke the verse may itself be the start of a new attempt
   S.sh=newDet();detStep(S.sh,w);
   S.msg=`⚠ ERREUR au mot « ${V[S.s][S.a].disp[V[S.s][S.a].td[S.miss]]} » — blocage sur ${S.s}:${S.a}`;S.msgCls="err";
 }
@@ -373,25 +421,30 @@ let sc="fatiha",si=0,timer,playing=false,flashT;
 const $=id=>document.getElementById(id);
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-function fit(el,box){let s=40;el.style.fontSize=s+"px";while(s>14&&(el.scrollHeight>box.clientHeight-6||el.scrollWidth>box.clientWidth)){s--;el.style.fontSize=s+"px";}}
+/* Size of the verse on the screen. Short verses use the full size; longer ones are reduced down to a floor;
+   beyond that the verse is shown at a readable size and slides like a prompter, following the word being recited. */
+let fitKey="";
+function fit(el,box,key){
+  const h=box.clientHeight,w=box.clientWidth;
+  const base=Math.max(18,Math.round(Math.min(h/6,w/14))),min=Math.max(14,Math.round(base*.65));
+  let s=base;el.style.fontSize=s+"px";
+  while(s>min&&el.scrollHeight>h-6){s--;el.style.fontSize=s+"px";}
+  if(el.scrollHeight<=h-6){box.classList.remove("scroll");el.style.transform="";fitKey=key;return;}
+  s=Math.round(base*.72);el.style.fontSize=s+"px";box.classList.add("scroll");
+  const f=el.querySelector("[data-f]"),max=Math.max(0,el.scrollHeight-h+8);
+  let y=f?f.offsetTop+f.offsetHeight/2-h/2:0;y=Math.max(0,Math.min(max,y));
+  if(key!==fitKey){el.style.transition="none";el.style.transform=`translateY(${-y}px)`;void el.offsetHeight;el.style.transition="";}
+  else el.style.transform=`translateY(${-y}px)`;
+  fitKey=key;
+}
 function verseHTML(fl){
-  const v=V[S.s][fl?S.flash.a:S.a],n=v.disp.length,last=[];
-  v.td.forEach((d,i)=>last[d]=i);
-  const cls=j=>{
-    if(fl||S.status==="validated")return"done";
-    if(S.miss>=0&&v.td[S.miss]===j)return"miss";
-    if(S.state==="error"&&S.p===0)return"done";
-    if(last[j]===undefined||last[j]<S.p)return"done";
-    return v.td[S.p]===j?"cur":"pend";
-  };
-  let a=0,b=n;
-  if(n>16){
-    const f=fl||S.status==="validated"?n-1:S.miss>=0?v.td[S.miss]:S.p<v.td.length?v.td[S.p]:n-1;
-    a=Math.floor(f/12)*12;b=Math.min(n,a+12);if(n-b<4){b=n;a=Math.max(0,Math.min(a,n-14));}
-  }
-  let h=a>0?'<span class="ell">… </span>':'';
-  for(let j=a;j<b;j++)h+=`<span class="${cls(j)}">${v.disp[j]}</span> `;
-  return h+(b<n?'<span class="ell">…</span>':'');
+  const v=V[S.s][fl?S.flash.a:S.a],n=v.disp.length;
+  const bad=!fl&&S.miss>=0?v.td[S.miss]:-1;
+  // word the prompter keeps in view: the faulty word, else the word being recited
+  const f=fl||S.status==="validated"?n-1:bad>=0?bad:S.p<v.td.length?v.td[S.p]:n-1;
+  let h="";
+  for(let j=0;j<n;j++)h+=`<span${j===bad?' class="miss"':""}${j===f?" data-f":""}>${v.disp[j]}</span> `;
+  return h;
 }
 function render(){
   const scr=$("screen"),vv=$("verse");
@@ -399,14 +452,10 @@ function render(){
   const fl=show&&S.flash&&S.state==="active"&&Date.now()<S.flash.until;
   clearTimeout(flashT);if(fl)flashT=setTimeout(render,S.flash.until-Date.now()+20);
   const A_=S.a,color=S.color,status=S.status;
-  scr.className="screen"+(color==="green"?" green":color==="red"?" red":"")+(fl?" pulse":"");
-  if(show){vv.innerHTML=verseHTML(false);fit(vv,scr);}
-  else{
-    vv.style.fontSize="";
-    vv.innerHTML=S.state==="ambiguous"?`<div class="idle"><span class="dots"><i></i><i></i><i></i></span><br><b>${S.det.cands.length} candidats</b> · écoute en cours, rien à afficher</div>`
-      :S.state==="end"?`<div class="idle"><b>Fin de récitation</b><br>${esc(S.msg.split(" — ")[1]||"Session en pause")}</div>`
-      :`<div class="idle">${S.state==="possible_start"?"<b>Takbīr</b> · en attente de récitation":"En écoute"}<br><span class="dots"><i></i><i></i><i></i></span></div>`;
-  }
+  // Frame: off until a verse is identified, red while blocked on an error, green otherwise
+  scr.className="screen"+(show?(S.state==="error"?" red":" green"):"")+(fl?" pulse":"");
+  if(show){vv.innerHTML=verseHTML(false);fit(vv,scr,S.s+":"+S.a);}
+  else{vv.style.fontSize="";vv.style.transform="";vv.innerHTML="";fitKey="";}
   $("mic").classList.toggle("on",mode==="live"?listening:playing);
   $("ref").innerHTML=show?`<span class="ar">${surahAr(S.s)}</span> ${surahName(S.s)} · ${S.s}:${A_} · suivant ${nextRef(S.s,A_)||"fin"}`:"—";
   const st=S.state==="ambiguous"?"ambiguous":status;
@@ -453,7 +502,7 @@ function startMic(){
     interim=interim.trim();showLive();
   };
   rec.onerror=e=>{
-    if(["not-allowed","service-not-allowed","audio-capture"].includes(e.error)){stopMic();
+    if(["not-allowed","service-not-allowed","audio-capture"].includes(e.error)){stopMic();matOff();
       note("Micro refusé ici. Dans l'aperçu claude.ai le micro est bloqué : ouvrez le fichier tpi-coran.html dans Chrome. Vous pouvez aussi saisir la récitation ci-dessous.",true);}
     else if(e.error==="network")note("La reconnaissance vocale de Chrome a besoin d'internet.",true);
   };
@@ -516,6 +565,30 @@ function setMode(m){mode=m;
   $("live-ctl").style.display=m==="live"?"grid":"none";$("demo-ctl").style.display=m==="demo"?"grid":"none";
   if(m==="demo"){if(listening)stopMic();initSc(sc);}else{stopPlay();liveReset();}}
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+/* ---------- Bare mat screen ---------- */
+let wake=null;
+async function matOn(){
+  if(mode!=="live")setMode("live");
+  document.body.classList.add("mat");
+  try{await document.documentElement.requestFullscreen();}catch(_){}
+  try{wake=await navigator.wakeLock.request("screen");}catch(_){}
+  if(!listening)startMic();
+  render();
+}
+function matOff(){
+  if(!document.body.classList.contains("mat"))return;
+  document.body.classList.remove("mat");
+  if(document.fullscreenElement){try{document.exitFullscreen();}catch(_){}}
+  try{if(wake)wake.release();}catch(_){}wake=null;
+  render();
+}
+$("mat-btn").onclick=matOn;
+$("screen").addEventListener("dblclick",matOff);
+$("screen").addEventListener("click",()=>{if(document.body.classList.contains("mat")&&!listening)startMic();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")matOff();});
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement)matOff();else render();});
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&document.body.classList.contains("mat")){try{wake=await navigator.wakeLock.request("screen");}catch(_){}}});
+if(new URLSearchParams(location.search).has("tapis"))document.body.classList.add("mat");
 if(!SR)note("Reconnaissance vocale absente de ce navigateur : utilisez Chrome pour le micro, ou saisissez la récitation ci-dessous.",true);
 window.addEventListener("resize",render);
 render();
